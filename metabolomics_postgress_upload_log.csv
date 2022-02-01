@@ -164,4 +164,4 @@ removed_qcs_normalized_results_20210428_TMS_CLIN099_20210719.csv,20220131,17:21:
 removed_qcs_normalized_results_20210818_BileAcid_CLIN099_20210825.csv,20220131,17:24:09,Bile - qual,CLIN099,52,,
 removed_qcs_quant_results_20201214_BileAcid_CLIN099_20211208.csv,20220131,17:24:19,Bile - quant,CLIN099,47,,
 removed_qcs_quant_results_20210630_Indole_Clin099_20210707.csv,20220131,17:24:38,Indole - quant,Clin099,49,,
-removed_qcs_normalized_results_20210630_Indole_Clin099_20210707.csv,20220131,17:28:54,Indole - qual,Clin099,49,,
+removed_qcs_normalized_results_20210630_Indole_Clin099_20210707.csv,20220131,17:28:54,Indole - qual,Clin099,49,,"removed_qcs_quant_results_20210630_Indole_Clin099_20210708.csv","20220201","16:30:28","Indole - quant","Clin099",49

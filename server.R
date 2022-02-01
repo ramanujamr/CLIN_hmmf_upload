@@ -247,7 +247,7 @@ server <- function(input, output, session)
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log==name) == TRUE)
+    if(any(df_log["filename"]==name) == TRUE)
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_pfbbr_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -395,7 +395,7 @@ server <- function(input, output, session)
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log==name) == TRUE)
+    if(any(df_log["filename"]==name) == TRUE)
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_pfbbr_quant <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -548,7 +548,7 @@ server <- function(input, output, session)
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log==name) == TRUE)
+    if(any(df_log["filename"]==name) == TRUE)
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_tms_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -720,7 +720,7 @@ server <- function(input, output, session)
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log==name) == TRUE)
+    if(any(df_log["filename"]==name) == TRUE)
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_bile_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -879,7 +879,7 @@ server <- function(input, output, session)
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log==name) == TRUE)
+    if(any(df_log["filename"]==name) == TRUE)
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_bile_quant <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -1051,7 +1051,7 @@ server <- function(input, output, session)
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log==name) == TRUE)
+    if(any(df_log["filename"]==name) == TRUE)
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_indole_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -1208,7 +1208,7 @@ server <- function(input, output, session)
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log==name) == TRUE)
+    if(any(df_log["filename"]==name) == TRUE)
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_indole_quant <- renderText("File name already exists") #'*PANEL SPECIFIC*
