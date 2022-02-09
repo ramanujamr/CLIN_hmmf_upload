@@ -1,6 +1,6 @@
 # TMS - Qual ===========================================================================================
 
-tab_tms_qual = tabPanel("TMS - qual", fluid=TRUE,
+tab_tms_qual = tabPanel("TMS - Qual", fluid=TRUE,
                           
                           ## Row 1/3 Filename ---------------------------------------------------------------------------------
                           
@@ -39,10 +39,16 @@ tab_tms_qual = tabPanel("TMS - qual", fluid=TRUE,
                           fluidRow(column(4,
                                           fileInput("inFile_tms_qual", "Choose CSV File", multiple = F,
                                                     accept = ".csv", placeholder = "No file selected"),
+                                          tags$style(".progress-bar {background-color:green}"),
                                           textOutput("filename_tms_qual")
                           ),
                           column(4, actionButton("check_tms_qual", "Check", width='200px'), textOutput("columns_tms_qual")),
                           column(4, actionButton("upload_tms_qual", "Upload to Postgress", width='200px'),  textOutput("upload_status_tms_qual"))
                           ),
-                          br()
+                          br(),
+                        fluidRow(column(4, offset = 8,
+                                        actionButton("overwrite_tms_qual", "Overwrite", width='200px'),
+                                        tags$style(type="text/css", "#overwrite_tms_qual {background-color:red;color: white}"))),
+                        
+                        br()
 )

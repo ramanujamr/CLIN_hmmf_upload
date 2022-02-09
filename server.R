@@ -4,29 +4,38 @@ server <- function(input, output, session)
   
   ######################################################################################################################
   
-  # 0. Initialization #################################################################################################
+  # 0. Initialization ####
   ## 0.1 Hide check and upload buttons =================================================================================
 
   shinyjs::hide("check_pfbbr_qual")
   shinyjs::hide("upload_pfbbr_qual")
+  shinyjs::hide("overwrite_pfbbr_qual")
   
   shinyjs::hide("check_pfbbr_quant")
   shinyjs::hide("upload_pfbbr_quant")
-  
+  shinyjs::hide("overwrite_pfbbr_quant")
+    
   shinyjs::hide("check_tms_qual")
   shinyjs::hide("upload_tms_qual")
+  shinyjs::hide("overwrite_tms_qual")
   
   shinyjs::hide("check_bile_qual")
   shinyjs::hide("upload_bile_qual")
+  shinyjs::hide("overwrite_bile_qual")
   
   shinyjs::hide("check_bile_quant")
   shinyjs::hide("upload_bile_quant")
+  shinyjs::hide("overwrite_bile_quant")
   
   shinyjs::hide("check_indole_qual")
   shinyjs::hide("upload_indole_qual")
+  shinyjs::hide("overwrite_indole_qual")
   
   shinyjs::hide("check_indole_quant")
   shinyjs::hide("upload_indole_quant")
+  shinyjs::hide("overwrite_indole_quant")
+  
+  
   
   ## 0.2 Output permitted columns tables ===============================================================================
   
@@ -52,8 +61,12 @@ server <- function(input, output, session)
                {
                  
                  df = read.csv("metabolomics_postgress_upload_log.csv")
+                 df <- df %>% group_by(batch, panel) %>% arrange(desc(date), desc(time)) %>% dplyr::slice(1) %>% select(!starts_with("X"))
+                 
                  df$sample_count <- as.numeric(df$sample_count)
                  df = df %>% group_by(panel, batch) %>% summarise(sample_count = sum(sample_count))
+                 
+                 
                  
                  desired_order = c("PFBBr - qual", "PFBBr - quant", "TMS - qual", "Bile - qual", "Bile - quant" ,
                                    "Indole - qual", "Indole - quant")
@@ -72,13 +85,14 @@ server <- function(input, output, session)
                  {
                    output$plot <- renderPlot({
                      
-                     ggplot(df, aes(x=batch, y=sample_count, fill=panel)) +
-                       geom_bar(position="stack", stat="identity") +
+                     ggplot(df, aes(x=batch, y=sample_count, fill=factor(panel, levels=desired_order))) +
+                       geom_col(position = 'stack', colour = 'black') +
                        ggtitle("Overall") +
                        xlab("Batch") +
                        ylab("# samples") +
                        theme(text = element_text(size=20), axis.text.x = element_text(angle=90, hjust=1)) +
-                       scale_fill_discrete(name = "Panel", breaks=desired_order) #to order legends as in dataset
+                       scale_fill_manual(name = "Panel",
+                                           values = all_panel_colors)  
                    })
                  }
                  
@@ -88,12 +102,12 @@ server <- function(input, output, session)
                    output$plot <- renderPlot({
                      
                      ggplot(df_pfbbr, aes(x=batch, y=sample_count, fill=panel)) +
-                       geom_bar(position="dodge", stat="identity") + 
+                       geom_col(position = position_dodge(preserve = "single"), color='black') +
                        ggtitle("PFBBr") +
                        xlab("Batch") +
                        ylab("# samples") +
                        theme(text = element_text(size=20), axis.text.x = element_text(angle=90, hjust=1)) +
-                       scale_fill_discrete(name = "Type", breaks=desired_order) + #to order legends as in dataset
+                       scale_fill_manual(name = "Type", values = pfbbr_colors) +
                        coord_cartesian(ylim = c(0, 100)) 
                      
                    })
@@ -105,12 +119,12 @@ server <- function(input, output, session)
                    output$plot <- renderPlot({
                      
                      ggplot(df_tms, aes(x=batch, y=sample_count, fill=panel)) +
-                       geom_bar(position="dodge", stat="identity") + 
+                       geom_col(position = position_dodge(preserve = "single"), color='black') +
                        ggtitle("TMS") +
                        xlab("Batch") +
                        ylab("# samples") +
                        theme(text = element_text(size=20), axis.text.x = element_text(angle=90, hjust=1)) +
-                       scale_fill_discrete(name = "Type", breaks=desired_order) + #to order legends as in dataset
+                       scale_fill_manual(name = "Type", values = tms_colors) + 
                        coord_cartesian(ylim = c(0, 100)) 
                      
                    })
@@ -121,12 +135,12 @@ server <- function(input, output, session)
                    output$plot <- renderPlot({
                      
                      ggplot(df_bile, aes(x=batch, y=sample_count, fill=panel)) +
-                       geom_bar(position="dodge", stat="identity") + 
+                       geom_col(position = position_dodge(preserve = "single"), color='black') +
                        ggtitle("Bile acids") +
                        xlab("Batch") +
                        ylab("# samples") +
                        theme(text = element_text(size=20), axis.text.x = element_text(angle=90, hjust=1)) +
-                       scale_fill_discrete(name = "Type", breaks=desired_order) + #to order legends as in dataset
+                       scale_fill_manual(name = "Type", values = bile_colors) + 
                        coord_cartesian(ylim = c(0, 100)) 
                      
                    })
@@ -137,12 +151,12 @@ server <- function(input, output, session)
                    output$plot <- renderPlot({
                      
                      ggplot(df_indole, aes(x=batch, y=sample_count, fill=panel)) +
-                       geom_bar(position="dodge", stat="identity") + 
+                       geom_col(position = position_dodge(preserve = "single"), color='black') +
                        ggtitle("Indole") +
                        xlab("Batch") +
                        ylab("# samples") +
                        theme(text = element_text(size=20), axis.text.x = element_text(angle=90, hjust=1)) +
-                       scale_fill_discrete(name = "Type", breaks=desired_order) + #to order legends as in dataset
+                       scale_fill_manual(name = "Type", values = indole_colors) + 
                        coord_cartesian(ylim = c(0, 100)) 
                      
                    })
@@ -152,6 +166,7 @@ server <- function(input, output, session)
   )
   
 
+  
   
   ######################################################################################################################
   
@@ -171,6 +186,7 @@ server <- function(input, output, session)
     match = grepl(x = name,
                   pattern = "removed_qcs_normalized_results_[0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]_PFBBr_[CE][LP][IH][ND][0-9]+_[0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9].csv|removed_qcs_normalized_results_[0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9]_PFBBr_EPCK015+_[0-9][0-9][0-9][0-9][0-1][0-9][0-3][0-9].csv", ignore.case = TRUE) #'*PANEL SPECIFIC*
     
+    
     if (match)
     {
       # Check for duplicate file name
@@ -180,7 +196,8 @@ server <- function(input, output, session)
       {
         shinyalert(title = "File name already exists", type = "error")
         shinyjs::hide("check_pfbbr_qual") #'*PANEL SPECIFIC*
-        shinyjs::hide("check_pfbbr_qual") #'*PANEL SPECIFIC*
+        shinyjs::hide("upload_pfbbr_qual") #'*PANEL SPECIFIC*
+        shinyjs::hide("overwrite_pfbbr_qual")
         return("File name already exists")
       }
       
@@ -198,7 +215,8 @@ server <- function(input, output, session)
       
       shinyalert(title = "Invalid file name", type = "error")
       shinyjs::hide("check_pfbbr_qual") #'*PANEL SPECIFIC*
-      shinyjs::hide("check_pfbbr_qual") #'*PANEL SPECIFIC*
+      shinyjs::hide("upload_pfbbr_qual") #'*PANEL SPECIFIC*
+      shinyjs::hide("overwrite_pfbbr_qual")
       return("Invalid file name")
       
     }
@@ -243,14 +261,17 @@ server <- function(input, output, session)
     file = input$inFile_pfbbr_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
+    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log["filename"]==name) == TRUE)
+    
+    if((any(df_log["panel"]=="PFBBr - qual") & any(df_log["batch"]==batch)) == TRUE)
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_pfbbr_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
+      shinyjs::show("overwrite_pfbbr_qual")
     }
     
     else
@@ -290,7 +311,7 @@ server <- function(input, output, session)
                             sample_count = nrow(df)
       )
       
-      write.table(x = df_log1, file = "metabolomics_postgress_upload_log.csv", col.names = F, row.names = F, append = TRUE, sep = ",")
+      write.table(x = df_log1, file = "metabolomics_postgress_upload_log.csv", row.names = F, append = TRUE, sep = ",")
       
       dbDisconnect(con)
       
@@ -298,6 +319,64 @@ server <- function(input, output, session)
       output$upload_status_pfbbr_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
       
     }
+    
+  })
+  
+  
+  observeEvent(input$overwrite_pfbbr_qual, {#'*PANEL SPECIFIC*
+    
+    file = input$inFile_pfbbr_qual #'*PANEL SPECIFIC*
+    df = read.csv(file$datapath)
+    name = file$name
+    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+  
+    con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
+                    user="dfi_admin", password="dfibugs")
+    
+    postgres_table = tbl(con,"scfa_v3") %>% filter(!(batch == batch_current & type == "normalized")) %>% collect() 
+    
+    dbWriteTable(con, "scfa_v3", postgres_table, row.names = F, append = F, overwrite=T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON scfa_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON scfa_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    
+    
+    df_upload <- 
+      df %>% 
+      rename(metabolomicsID = sampleid) %>% 
+      pivot_longer(-metabolomicsID, names_to = "compound", values_to = "value") %>% 
+      mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
+             compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
+             compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             filename = name,
+             date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
+             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             type = "normalized") %>% #'*PANEL SPECIFIC*
+      select(date_run, batch, type, filename, compound, value)
+    
+    
+    dbWriteTable(con, "scfa_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON scfa_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON scfa_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    dbDisconnect(con)
+    
+    # UPDATE LOG FILE
+    
+    name = file$name
+    df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    
+    df_log1 <- data.frame(filename = name,
+                          date = format(Sys.Date(),format = "%Y%m%d"),
+                          time = format(Sys.time(),format = "%H:%M:%S"),
+                          panel = "PFBBr - qual", #'*PANEL SPECIFIC*
+                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          sample_count = nrow(df)
+    )
+    df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
+    
+    write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
+
+    shinyalert(title = "Upload successful", type = "success")
+    output$upload_status_pfbbr_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
     
   })
   
@@ -325,7 +404,7 @@ server <- function(input, output, session)
     {
       shinyalert(title = "Invalid file name", type = "error")
       shinyjs::hide("check_pfbbr_quant") #'*PANEL SPECIFIC*
-      shinyjs::hide("check_pfbbr_quant") #'*PANEL SPECIFIC*
+      shinyjs::hide("upload_pfbbr_quant") #'*PANEL SPECIFIC*
       return("Invalid file name")
     }
     
@@ -338,7 +417,7 @@ server <- function(input, output, session)
       {
         shinyalert(title = "File name already exists", type = "error")
         shinyjs::hide("check_pfbbr_quant") #'*PANEL SPECIFIC*
-        shinyjs::hide("check_pfbbr_quant") #'*PANEL SPECIFIC*
+        shinyjs::hide("upload_pfbbr_quant") #'*PANEL SPECIFIC*
         return("File name already exists")
       }
       
@@ -391,15 +470,18 @@ server <- function(input, output, session)
     file = input$inFile_pfbbr_quant #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
+    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log["filename"]==name) == TRUE)
+    if((any(df_log["panel"]=="PFBBr - quant") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_pfbbr_quant <- renderText("File name already exists") #'*PANEL SPECIFIC*
+      shinyjs::show("overwrite_pfbbr_quant") #'*PANEL SPECIFIC*
     }
+    
     
     # APPEND TO MASTER DATAFRAME
     else
@@ -449,6 +531,63 @@ server <- function(input, output, session)
     
   })
   
+  observeEvent(input$overwrite_pfbbr_quant, {#'*PANEL SPECIFIC*
+    
+    file = input$inFile_pfbbr_quant #'*PANEL SPECIFIC*
+    df = read.csv(file$datapath)
+    name = file$name
+    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    
+    con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
+                    user="dfi_admin", password="dfibugs")
+    
+    postgres_table = tbl(con,"scfa_v3") %>% filter(!(batch == batch_current & type == "quant")) %>% collect() #'*PANEL SPECIFIC*
+    
+    dbWriteTable(con, "scfa_v3", postgres_table, row.names = F, append = F, overwrite=T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON scfa_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON scfa_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    
+    
+    df_upload <- 
+      df %>% 
+      rename(metabolomicsID = sampleid) %>% 
+      pivot_longer(-metabolomicsID, names_to = "compound", values_to = "value") %>% 
+      mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
+             compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
+             compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             filename = name,
+             date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
+             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             type = "quant") %>% #'*PANEL SPECIFIC*
+      select(date_run, batch, type, filename, compound, value)
+    
+    
+    dbWriteTable(con, "scfa_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON scfa_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON scfa_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    dbDisconnect(con)
+    
+    # UPDATE LOG FILE
+    
+    name = file$name
+    df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    
+    df_log1 <- data.frame(filename = name,
+                          date = format(Sys.Date(),format = "%Y%m%d"),
+                          time = format(Sys.time(),format = "%H:%M:%S"),
+                          panel = "PFBBr - quant", #'*PANEL SPECIFIC*
+                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          sample_count = nrow(df)
+    )
+    df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
+    
+    write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
+    
+    shinyalert(title = "Upload successful", type = "success")
+    output$upload_status_pfbbr_quant <- renderText("Upload successful") #'*PANEL SPECIFIC*
+    
+  })
+  
   
   
   
@@ -477,7 +616,8 @@ server <- function(input, output, session)
     {
       shinyalert(title = "Invalid file name", type = "error")
       shinyjs::hide("check_tms_qual") #'*PANEL SPECIFIC*
-      shinyjs::hide("check_tms_qual") #'*PANEL SPECIFIC*
+      shinyjs::hide("upload_tms_qual") #'*PANEL SPECIFIC*
+      shinyjs::hide("overwrite_tms_qual") #'*PANEL SPECIFIC*
       return("Invalid file name")
     }
     
@@ -490,7 +630,8 @@ server <- function(input, output, session)
       {
         shinyalert(title = "File name already exists", type = "error")
         shinyjs::hide("check_tms_qual") #'*PANEL SPECIFIC*
-        shinyjs::hide("check_tms_qual") #'*PANEL SPECIFIC*
+        shinyjs::hide("upload_tms_qual") #'*PANEL SPECIFIC*
+        shinyjs::hide("overwrite_tms_qual") #'*PANEL SPECIFIC*
         return("File name already exists")
       }
       
@@ -544,16 +685,18 @@ server <- function(input, output, session)
     file = input$inFile_tms_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
+    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log["filename"]==name) == TRUE)
+    if((any(df_log["panel"]=="TMS - qual") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_tms_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
+      shinyjs::show("overwrite_tms_qual") #'*PANEL SPECIFIC*
     }
-    
+      
     else
     {
       
@@ -601,6 +744,63 @@ server <- function(input, output, session)
     
   })
   
+  observeEvent(input$overwrite_tms_qual, {#'*PANEL SPECIFIC*
+    
+    file = input$inFile_tms_qual #'*PANEL SPECIFIC*
+    df = read.csv(file$datapath)
+    name = file$name
+    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    
+    con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
+                    user="dfi_admin", password="dfibugs")
+    
+    postgres_table = tbl(con,"tms_v3") %>% filter(!(batch == batch_current & type == "normalized")) %>% collect() #'*PANEL SPECIFIC*
+    
+    dbWriteTable(con, "tms_v3", postgres_table, row.names = F, append = F, overwrite=T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON tms_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON tms_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    
+    
+    df_upload <- 
+      df %>% 
+      rename(metabolomicsID = sampleid) %>% 
+      pivot_longer(-metabolomicsID, names_to = "compound", values_to = "value") %>% 
+      mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
+             compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
+             compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             filename = name,
+             date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
+             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             type = "normalized") %>% #'*PANEL SPECIFIC*
+      select(date_run, batch, type, filename, compound, value)
+    
+    
+    dbWriteTable(con, "tms_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON tms_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON tms_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    dbDisconnect(con)
+    
+    # UPDATE LOG FILE
+    
+    name = file$name
+    df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    
+    df_log1 <- data.frame(filename = name,
+                          date = format(Sys.Date(),format = "%Y%m%d"),
+                          time = format(Sys.time(),format = "%H:%M:%S"),
+                          panel = "TMS - qual", #'*PANEL SPECIFIC*
+                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          sample_count = nrow(df)
+    )
+    df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
+    
+    write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
+    
+    shinyalert(title = "Upload successful", type = "success")
+    output$upload_status_tms_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
+    
+  })
+  
   
   
   
@@ -628,7 +828,8 @@ server <- function(input, output, session)
     {
       shinyalert(title = "Invalid file name", type = "error")
       shinyjs::hide("check_bile_qual") #'*PANEL SPECIFIC*
-      shinyjs::hide("check_bile_qual") #'*PANEL SPECIFIC*
+      shinyjs::hide("upload_bile_qual") #'*PANEL SPECIFIC*
+      shinyjs::hide("overwrite_bile_qual") #'*PANEL SPECIFIC*
       return("Invalid file name")
     }
     
@@ -641,7 +842,8 @@ server <- function(input, output, session)
       {
         shinyalert(title = "File name already exists", type = "error")
         shinyjs::hide("check_bile_qual") #'*PANEL SPECIFIC*
-        shinyjs::hide("check_bile_qual") #'*PANEL SPECIFIC*
+        shinyjs::hide("upload_bile_qual") #'*PANEL SPECIFIC*
+        shinyjs::hide("overwrite_bile_qual") #'*PANEL SPECIFIC*
         return("File name already exists")
       }
       
@@ -716,14 +918,16 @@ server <- function(input, output, session)
     file = input$inFile_bile_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
+    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log["filename"]==name) == TRUE)
+    if((any(df_log["panel"]=="Bile - qual") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_bile_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
+      shinyjs::show("overwrite_bile_qual") #'*PANEL SPECIFIC*
     }
     
     # APPEND TO MASTER DATAFRAME
@@ -776,6 +980,63 @@ server <- function(input, output, session)
   
   
   
+  observeEvent(input$overwrite_bile_qual, {#'*PANEL SPECIFIC*
+    
+    file = input$inFile_bile_qual #'*PANEL SPECIFIC*
+    df = read.csv(file$datapath)
+    name = file$name
+    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    
+    con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
+                    user="dfi_admin", password="dfibugs")
+    
+    postgres_table = tbl(con,"bile_v3") %>% filter(!(batch == batch_current & type == "normalized")) %>% collect() #'*PANEL SPECIFIC*
+    
+    dbWriteTable(con, "bile_v3", postgres_table, row.names = F, append = F, overwrite=T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON bile_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON bile_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    
+    
+    df_upload <- 
+      df %>% 
+      rename(metabolomicsID = sampleid) %>% 
+      pivot_longer(-metabolomicsID, names_to = "compound", values_to = "value") %>% 
+      mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
+             compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
+             compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             filename = name,
+             date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
+             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             type = "normalized") %>% #'*PANEL SPECIFIC*
+      select(date_run, batch, type, filename, compound, value)
+    
+    
+    dbWriteTable(con, "bile_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON bile_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON bile_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    dbDisconnect(con)
+    
+    # UPDATE LOG FILE
+    
+    name = file$name
+    df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    
+    df_log1 <- data.frame(filename = name,
+                          date = format(Sys.Date(),format = "%Y%m%d"),
+                          time = format(Sys.time(),format = "%H:%M:%S"),
+                          panel = "Bile - qual", #'*PANEL SPECIFIC*
+                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          sample_count = nrow(df)
+    )
+    df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
+    
+    write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
+    
+    shinyalert(title = "Upload successful", type = "success")
+    output$upload_status_bile_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
+    
+  })
+  
   
   
   
@@ -804,7 +1065,8 @@ server <- function(input, output, session)
     {
       shinyalert(title = "Invalid file name", type = "error")
       shinyjs::hide("check_bile_quant") #'*PANEL SPECIFIC*
-      shinyjs::hide("check_bile_quant") #'*PANEL SPECIFIC*
+      shinyjs::hide("upload_bile_quant") #'*PANEL SPECIFIC*
+      shinyjs::hide("overwrite_bile_quant") #'*PANEL SPECIFIC*
       return("Invalid file name")
     }
     
@@ -817,7 +1079,8 @@ server <- function(input, output, session)
       {
         shinyalert(title = "File name already exists", type = "error")
         shinyjs::hide("check_bile_quant") #'*PANEL SPECIFIC*
-        shinyjs::hide("check_bile_quant") #'*PANEL SPECIFIC*
+        shinyjs::hide("upload_bile_quant") #'*PANEL SPECIFIC*
+        shinyjs::hide("overwrite_bile_quant") #'*PANEL SPECIFIC*
         return("File name already exists")
       }
       
@@ -875,14 +1138,16 @@ server <- function(input, output, session)
     file = input$inFile_bile_quant #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
+    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log["filename"]==name) == TRUE)
+    if((any(df_log["panel"]=="Bile - quant") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_bile_quant <- renderText("File name already exists") #'*PANEL SPECIFIC*
+      shinyjs::show("overwrite_bile_quant") #'*PANEL SPECIFIC*
     }
   
     else
@@ -935,6 +1200,63 @@ server <- function(input, output, session)
   })
 
   
+  observeEvent(input$overwrite_bile_quant, {#'*PANEL SPECIFIC*
+    
+    file = input$inFile_bile_quant #'*PANEL SPECIFIC*
+    df = read.csv(file$datapath)
+    name = file$name
+    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    
+    con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
+                    user="dfi_admin", password="dfibugs")
+    
+    postgres_table = tbl(con,"bile_v3") %>% filter(!(batch == batch_current & type == "quant")) %>% collect() #'*PANEL SPECIFIC*
+    
+    dbWriteTable(con, "bile_v3", postgres_table, row.names = F, append = F, overwrite=T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON bile_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON bile_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    
+    
+    df_upload <- 
+      df %>% 
+      rename(metabolomicsID = sampleid) %>% 
+      pivot_longer(-metabolomicsID, names_to = "compound", values_to = "value") %>% 
+      mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
+             compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
+             compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             filename = name,
+             date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
+             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             type = "quant") %>% #'*PANEL SPECIFIC*
+      select(date_run, batch, type, filename, compound, value)
+    
+    
+    dbWriteTable(con, "bile_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON bile_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON bile_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    dbDisconnect(con)
+    
+    # UPDATE LOG FILE
+    
+    name = file$name
+    df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    
+    df_log1 <- data.frame(filename = name,
+                          date = format(Sys.Date(),format = "%Y%m%d"),
+                          time = format(Sys.time(),format = "%H:%M:%S"),
+                          panel = "Bile - qual", #'*PANEL SPECIFIC*
+                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          sample_count = nrow(df)
+    )
+    df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
+    
+    write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
+    
+    shinyalert(title = "Upload successful", type = "success")
+    output$upload_status_bile_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
+    
+  })
+  
   
   
   ######################################################################################################################
@@ -959,7 +1281,8 @@ server <- function(input, output, session)
     {
       shinyalert(title = "Invalid file name", type = "error")
       shinyjs::hide("check_indole_qual") #'*PANEL SPECIFIC*
-      shinyjs::hide("check_indole_qual") #'*PANEL SPECIFIC*
+      shinyjs::hide("upload_indole_qual") #'*PANEL SPECIFIC*
+      shinyjs::hide("overwrite_indole_qual") #'*PANEL SPECIFIC*
       return("Invalid file name")
     }
     
@@ -972,7 +1295,8 @@ server <- function(input, output, session)
       {
         shinyalert(title = "File name already exists", type = "error")
         shinyjs::hide("check_indole_qual") #'*PANEL SPECIFIC*
-        shinyjs::hide("check_indole_qual") #'*PANEL SPECIFIC*
+        shinyjs::hide("upload_indole_qual") #'*PANEL SPECIFIC*
+        shinyjs::hide("overwrite_indole_qual") #'*PANEL SPECIFIC*
         return("File name already exists")
       }
       
@@ -1047,14 +1371,16 @@ server <- function(input, output, session)
     file = input$inFile_indole_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
+    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log["filename"]==name) == TRUE)
+    if((any(df_log["panel"]=="Indole - qual") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_indole_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
+      shinyjs::show("overwrite_indole_qual") #'*PANEL SPECIFIC*
     }
     
     # APPEND TO MASTER DATAFRAME
@@ -1106,6 +1432,63 @@ server <- function(input, output, session)
   })
   
   
+  observeEvent(input$overwrite_indole_qual, {#'*PANEL SPECIFIC*
+    
+    file = input$inFile_indole_qual #'*PANEL SPECIFIC*
+    df = read.csv(file$datapath)
+    name = file$name
+    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    
+    con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
+                    user="dfi_admin", password="dfibugs")
+    
+    postgres_table = tbl(con,"indole_v3") %>% filter(!(batch == batch_current & type == "normalized")) %>% collect() #'*PANEL SPECIFIC*
+    
+    dbWriteTable(con, "indole_v3", postgres_table, row.names = F, append = F, overwrite=T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON indole_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON indole_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    
+    
+    df_upload <- 
+      df %>% 
+      rename(metabolomicsID = sampleid) %>% 
+      pivot_longer(-metabolomicsID, names_to = "compound", values_to = "value") %>% 
+      mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
+             compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
+             compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             filename = name,
+             date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
+             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             type = "normalized") %>% #'*PANEL SPECIFIC*
+      select(date_run, batch, type, filename, compound, value)
+    
+    
+    dbWriteTable(con, "indole_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON indole_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON indole_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    dbDisconnect(con)
+    
+    # UPDATE LOG FILE
+    
+    name = file$name
+    df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    
+    df_log1 <- data.frame(filename = name,
+                          date = format(Sys.Date(),format = "%Y%m%d"),
+                          time = format(Sys.time(),format = "%H:%M:%S"),
+                          panel = "Indole - qual", #'*PANEL SPECIFIC*
+                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          sample_count = nrow(df)
+    )
+    df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
+    
+    write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
+    
+    shinyalert(title = "Upload successful", type = "success")
+    output$upload_status_indole_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
+    
+  })
+  
   
   
   
@@ -1133,7 +1516,8 @@ server <- function(input, output, session)
     {
       shinyalert(title = "Invalid file name", type = "error")
       shinyjs::hide("check_indole_quant") #'*PANEL SPECIFIC*
-      shinyjs::hide("check_indole_quant") #'*PANEL SPECIFIC*
+      shinyjs::hide("upload_indole_quant") #'*PANEL SPECIFIC*
+      shinyjs::hide("overwrite_indole_quant") #'*PANEL SPECIFIC*
       return("Invalid file name")
     }
     
@@ -1146,7 +1530,8 @@ server <- function(input, output, session)
       {
         shinyalert(title = "File name already exists", type = "error")
         shinyjs::hide("check_indole_quant") #'*PANEL SPECIFIC*
-        shinyjs::hide("check_indole_quant") #'*PANEL SPECIFIC*
+        shinyjs::hide("upload_indole_quant") #'*PANEL SPECIFIC*
+        shinyjs::hide("overwrite_indole_quant") #'*PANEL SPECIFIC*
         return("File name already exists")
       }
       
@@ -1204,14 +1589,16 @@ server <- function(input, output, session)
     file = input$inFile_indole_quant #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
+    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     
-    if(any(df_log["filename"]==name) == TRUE)
+    if((any(df_log["panel"]=="Indole - quant") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_indole_quant <- renderText("File name already exists") #'*PANEL SPECIFIC*
+      shinyjs::show("overwrite_indole_quant") #'*PANEL SPECIFIC*
     }
     
     else
@@ -1262,6 +1649,66 @@ server <- function(input, output, session)
     }
     
   })
+  
+  
+  
+  observeEvent(input$overwrite_indole_quant, {#'*PANEL SPECIFIC*
+    
+    file = input$inFile_indole_quant #'*PANEL SPECIFIC*
+    df = read.csv(file$datapath)
+    name = file$name
+    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    
+    con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
+                    user="dfi_admin", password="dfibugs")
+    
+    postgres_table = tbl(con,"indole_v3") %>% filter(!(batch == batch_current & type == "quant")) %>% collect() #'*PANEL SPECIFIC*
+    
+    dbWriteTable(con, "indole_v3", postgres_table, row.names = F, append = F, overwrite=T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON indole_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON indole_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    
+    
+    df_upload <- 
+      df %>% 
+      rename(metabolomicsID = sampleid) %>% 
+      pivot_longer(-metabolomicsID, names_to = "compound", values_to = "value") %>% 
+      mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
+             compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
+             compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             filename = name,
+             date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
+             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             type = "quant") %>% #'*PANEL SPECIFIC*
+      select(date_run, batch, type, filename, compound, value)
+    
+    
+    dbWriteTable(con, "indole_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON indole_v3 TO dfi_lab") #'*PANEL SPECIFIC*
+    dbSendStatement(con, "GRANT SELECT ON indole_v3 TO dfi_user") #'*PANEL SPECIFIC*
+    dbDisconnect(con)
+    
+    # UPDATE LOG FILE
+    
+    name = file$name
+    df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    
+    df_log1 <- data.frame(filename = name,
+                          date = format(Sys.Date(),format = "%Y%m%d"),
+                          time = format(Sys.time(),format = "%H:%M:%S"),
+                          panel = "Indole - quant", #'*PANEL SPECIFIC*
+                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          sample_count = nrow(df)
+    )
+    df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
+    
+    write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
+    
+    shinyalert(title = "Upload successful", type = "success")
+    output$upload_status_indole_quant <- renderText("Upload successful") #'*PANEL SPECIFIC*
+    
+  })
+  
   
   
   

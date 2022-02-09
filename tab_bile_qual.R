@@ -39,10 +39,16 @@ tab_bile_qual = tabPanel("Bile - Qual", fluid=TRUE,
          fluidRow(column(4,
                          fileInput("inFile_bile_qual", "Choose CSV File", multiple = F,
                                    accept = ".csv", placeholder = "No file selected"),
+                         tags$style(".progress-bar {background-color:green}"),
                          textOutput("filename_bile_qual")
          ),
          column(4, actionButton("check_bile_qual", "Check", width='200px'), textOutput("columns_bile_qual")),
          column(4, actionButton("upload_bile_qual", "Upload to Postgress", width='200px'),  textOutput("upload_status_bile_qual"))
          ),
+         br(),
+         fluidRow(column(4, offset = 8,
+                         actionButton("overwrite_bile_qual", "Overwrite", width='200px'),
+                         tags$style(type="text/css", "#overwrite_bile_qual {background-color:red;color: white}"))),
+         
          br()
 )

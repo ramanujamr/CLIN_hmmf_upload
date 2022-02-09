@@ -10,7 +10,7 @@ source('tab_graphs.R')
 
 ui <- fluidPage(theme = shinytheme("journal"), useShinyjs(),
                 
-                titlePanel(h2("Upload metabolomics data to Postgres", align = "center")),
+                titlePanel(h2("Upload clinical metabolomics data to Postgres", align = "center")),
                 
                 tabsetPanel(
                   tab_pfbbr_qual,

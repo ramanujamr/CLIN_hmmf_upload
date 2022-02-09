@@ -124,7 +124,7 @@ permitted_columns_indole_quant = list("sampleid", "x5hiaa", "anthranilicacid",	"
                                       "niacin", "phenylalanine", "serotonin", "tryptamine", "tryptophan", "tyrosine")
 
 
-## 0.2 Remove leading x's and create dataframes for display table =====================================================
+## 0.2 Remove leading x's and create dataframes for display table ======================================================
 temp_list = gsub(permitted_columns_pfbbr_qual, pattern = "^x(?=[0-9])", replacement = "", perl = T)
 df_permitted_columns_pfbbr_qual = data.frame(index = c(1:length(temp_list)), permitted.columns = unlist(temp_list))
 
@@ -145,6 +145,15 @@ df_permitted_columns_indole_qual = data.frame(index = c(1:length(temp_list)), pe
 
 temp_list = gsub(permitted_columns_indole_quant, pattern = "^x(?=[0-9])", replacement = "", perl = T)
 df_permitted_columns_indole_quant = data.frame(index = c(1:length(temp_list)), permitted.columns = unlist(temp_list))
+
+
+# 0.3 Colors for panels ================================================================================================
+
+pfbbr_colors = c("goldenrod3", "goldenrod1")
+tms_colors = c("cadetblue")
+bile_colors = c("darkolivegreen4", "darkolivegreen2")
+indole_colors = c("red3", "salmon")
+all_panel_colors = c(pfbbr_colors, tms_colors, bile_colors, indole_colors)
 
 
 

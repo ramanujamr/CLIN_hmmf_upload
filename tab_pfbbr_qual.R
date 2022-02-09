@@ -39,11 +39,19 @@ tab_pfbbr_qual = tabPanel("PFBBr - Qual", fluid=TRUE,
                    fluidRow(column(4,
                                    fileInput("inFile_pfbbr_qual", "Choose CSV File", multiple = F,
                                              accept = ".csv", placeholder = "No file selected"),
+                                   tags$style(".progress-bar {background-color:green}"),
                                    textOutput("filename_pfbbr_qual")
                    ),
                    
                    column(4, actionButton("check_pfbbr_qual", "Check", width='200px'), textOutput("columns_pfbbr_qual")),
                    column(4, actionButton("upload_pfbbr_qual", "Upload to Postgress", width='200px'),  textOutput("upload_status_pfbbr_qual"))
                    ),
+                   br(),
+                   
+                   fluidRow(column(4, offset = 8,
+                                   actionButton("overwrite_pfbbr_qual", "Overwrite", width='200px'),
+                                   tags$style(type="text/css", "#overwrite_pfbbr_qual {background-color:red;color: white}"))),
+                   
                    br()
+              
           )

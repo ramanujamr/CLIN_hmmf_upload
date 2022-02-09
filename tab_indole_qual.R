@@ -1,6 +1,6 @@
 # Indole - Qual ===========================================================================================
 
-tab_indole_qual = tabPanel("Indole - qual", fluid=TRUE,
+tab_indole_qual = tabPanel("Indole - Qual", fluid=TRUE,
                         
                         ## Row 1/3 Filename ---------------------------------------------------------------------------------
                         
@@ -39,10 +39,16 @@ tab_indole_qual = tabPanel("Indole - qual", fluid=TRUE,
                         fluidRow(column(4,
                                         fileInput("inFile_indole_qual", "Choose CSV File", multiple = F,
                                                   accept = ".csv", placeholder = "No file selected"),
+                                        tags$style(".progress-bar {background-color:green}"),
                                         textOutput("filename_indole_qual")
                         ),
                         column(4, actionButton("check_indole_qual", "Check", width='200px'), textOutput("columns_indole_qual")),
                         column(4, actionButton("upload_indole_qual", "Upload to Postgress", width='200px'),  textOutput("upload_status_indole_qual"))
                         ),
+                        br(),
+                        fluidRow(column(4, offset = 8,
+                                        actionButton("overwrite_indole_qual", "Overwrite", width='200px'),
+                                        tags$style(type="text/css", "#overwrite_indole_qual {background-color:red;color: white}"))),
+                        
                         br()
 )

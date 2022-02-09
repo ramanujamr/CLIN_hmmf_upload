@@ -1,6 +1,6 @@
 # Bile Acid - Quant ===========================================================================================
 
-tab_bile_quant = tabPanel("Bile - quant", fluid=TRUE,
+tab_bile_quant = tabPanel("Bile - Quant", fluid=TRUE,
          
          ## Row 1/3 Filename ---------------------------------------------------------------------------------
          
@@ -39,10 +39,16 @@ tab_bile_quant = tabPanel("Bile - quant", fluid=TRUE,
          fluidRow(column(4,
                          fileInput("inFile_bile_quant", "Choose CSV File", multiple = F,
                                    accept = ".csv", placeholder = "No file selected"),
+                         tags$style(".progress-bar {background-color:green}"),
                          textOutput("filename_bile_quant")
          ),
          column(4, actionButton("check_bile_quant", "Check", width='200px'), textOutput("columns_bile_quant")),
          column(4, actionButton("upload_bile_quant", "Upload to Postgress", width='200px'),  textOutput("upload_status_bile_quant"))
          ),
+         br(),
+         fluidRow(column(4, offset = 8,
+                         actionButton("overwrite_bile_quant", "Overwrite", width='200px'),
+                         tags$style(type="text/css", "#overwrite_bile_quant {background-color:red;color: white}"))),
+         
          br()
 )
