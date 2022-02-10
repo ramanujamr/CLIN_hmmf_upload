@@ -66,6 +66,8 @@ server <- function(input, output, session)
                  df$sample_count <- as.numeric(df$sample_count)
                  df = df %>% group_by(panel, batch) %>% summarise(sample_count = sum(sample_count))
                  
+                 df = mutate(df, batch = toupper(batch))
+                 
                  
                  
                  desired_order = c("PFBBr - qual", "PFBBr - quant", "TMS - qual", "Bile - qual", "Bile - quant" ,
