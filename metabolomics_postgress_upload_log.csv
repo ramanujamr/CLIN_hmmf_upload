@@ -177,3 +177,10 @@
 "removed_qcs_normalized_results_20210630_Indole_Clin099_21210707.csv","20220209","17:06:16","Indole - qual","Clin099",49,NA
 "removed_qcs_quant_results_20210630_Indole_Clin099_20210708.csv","20220209","17:06:59","Indole - quant","Clin099",49,NA
 "removed_qcs_quant_results_20211025_BileAcid_CLIN039_20220208.csv","20220210","15:35:53","Bile - qual","CLIN039",49,NA
+"removed_qcs_normalized_results_20211021_BileAcid_CLIN039_20220208.csv","20220215","10:23:58","Bile - qual","CLIN039",49,NA
+"removed_qcs_quant_results_20211025_BileAcid_CLIN039_20220214.csv","20220215","10:37:08","Bile - qual","CLIN039",49,NA
+"removed_qcs_normalized_results_20211021_BileAcid_CLIN039_20220214.csv","20220215","10:44:39","Bile - qual","CLIN039",49,NA
+"removed_qcs_quant_results_20211104_BileAcid_CLIN036_20220203.csv","20220215","10:46:16","Bile - qual","CLIN036",49,NA
+"removed_qcs_quant_results_20211104_BileAcid_CLIN036_20220204.csv","20220215","10:48:10","Bile - qual","CLIN036",49,NA
+"removed_qcs_quant_results_20220209_BileAcid_CLIN038_20220209.csv","20220215","13:44:11","Bile - qual","CLIN038",49,NA
+"removed_qcs_normalized_results_20220209_BileAcid_CLIN038_20220209.csv","20220215","13:46:16","Bile - qual","CLIN038",49,NA
