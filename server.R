@@ -301,8 +301,12 @@ server <- function(input, output, session)
       dbSendStatement(con, "GRANT SELECT ON scfa_v3 TO dfi_user") #'*PANEL SPECIFIC*
       
       
-      # UPDATE LOG FILE
+      # Update Log file
+      
       name = file$name
+      df_log = read.csv("metabolomics_postgress_upload_log.csv")
+      df_log[is.na(df_log)] = 0
+      
       df_log1 <- data.frame(filename = name,
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
@@ -310,13 +314,14 @@ server <- function(input, output, session)
                             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                             sample_count = nrow(df)
       )
+      df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
       
-      write.table(x = df_log1, file = "metabolomics_postgress_upload_log.csv", row.names = F, append = TRUE, sep = ",")
-      
-      dbDisconnect(con)
+      write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
       
       shinyalert(title = "Upload successful", type = "success")
       output$upload_status_pfbbr_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
+      
+      dbDisconnect(con)
       
     }
     
@@ -511,7 +516,11 @@ server <- function(input, output, session)
       
       
       # UPDATE LOG FILE
+      
       name = file$name
+      df_log = read.csv("metabolomics_postgress_upload_log.csv")
+      df_log[is.na(df_log)] = 0
+      
       df_log1 <- data.frame(filename = name,
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
@@ -519,14 +528,15 @@ server <- function(input, output, session)
                             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                             sample_count = nrow(df)
       )
+      df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
       
-      write.table(x = df_log1, file = "metabolomics_postgress_upload_log.csv", col.names = F, row.names = F, append = TRUE, sep = ",")
-      
-      
-      dbDisconnect(con)
+      write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
       
       shinyalert(title = "Upload successful", type = "success")
       output$upload_status_pfbbr_quant <- renderText("Upload successful") #'*PANEL SPECIFIC*
+      
+      dbDisconnect(con)
+      
       
     }
     
@@ -728,7 +738,11 @@ server <- function(input, output, session)
       
       
       # UPDATE LOG FILE
+      
       name = file$name
+      df_log = read.csv("metabolomics_postgress_upload_log.csv")
+      df_log[is.na(df_log)] = 0
+      
       df_log1 <- data.frame(filename = name,
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
@@ -736,13 +750,14 @@ server <- function(input, output, session)
                             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                             sample_count = nrow(df)
       )
+      df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
       
-      write.table(x = df_log1, file = "metabolomics_postgress_upload_log.csv", col.names = F, row.names = F, append = TRUE, sep = ",")
-      
-      dbDisconnect(con)
+      write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
       
       shinyalert(title = "Upload successful", type = "success")
       output$upload_status_tms_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
+      
+      dbDisconnect(con)
       
     }
     
@@ -962,7 +977,11 @@ server <- function(input, output, session)
       
       
       # UPDATE LOG FILE
+      
       name = file$name
+      df_log = read.csv("metabolomics_postgress_upload_log.csv")
+      df_log[is.na(df_log)] = 0
+      
       df_log1 <- data.frame(filename = name,
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
@@ -970,14 +989,15 @@ server <- function(input, output, session)
                             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                             sample_count = nrow(df)
       )
+      df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
       
-      write.table(x = df_log1, file = "metabolomics_postgress_upload_log.csv", col.names = F, row.names = F, append = TRUE, sep = ",")
-      
-
-      dbDisconnect(con)
+      write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
       
       shinyalert(title = "Upload successful", type = "success")
       output$upload_status_bile_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
+      
+      dbDisconnect(con)
+  
       
     }
 
@@ -1188,22 +1208,26 @@ server <- function(input, output, session)
       
       
       # UPDATE LOG FILE
+      
       name = file$name
+      df_log = read.csv("metabolomics_postgress_upload_log.csv")
+      df_log[is.na(df_log)] = 0
+      
       df_log1 <- data.frame(filename = name,
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
-                            panel = "Bile - quant", #'*PANEL SPECIFIC*
+                            panel = "Bile - qual", #'*PANEL SPECIFIC*
                             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                             sample_count = nrow(df)
       )
+      df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
       
-      write.table(x = df_log1, file = "metabolomics_postgress_upload_log.csv", col.names = F, row.names = F, append = TRUE, sep = ",")
-      
-      
-      dbDisconnect(con)
+      write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
       
       shinyalert(title = "Upload successful", type = "success")
-      output$upload_status_bile_quant <- renderText("Upload successful") #'*PANEL SPECIFIC*
+      output$upload_status_bile_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
+      
+      dbDisconnect(con)
       
     }
     
@@ -1421,7 +1445,11 @@ server <- function(input, output, session)
       
       
       # UPDATE LOG FILE
+      
       name = file$name
+      df_log = read.csv("metabolomics_postgress_upload_log.csv")
+      df_log[is.na(df_log)] = 0
+      
       df_log1 <- data.frame(filename = name,
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
@@ -1429,15 +1457,15 @@ server <- function(input, output, session)
                             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                             sample_count = nrow(df)
       )
+      df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
       
-      write.table(x = df_log1, file = "metabolomics_postgress_upload_log.csv", col.names = F, row.names = F, append = TRUE, sep = ",")
-      
-      
-      dbDisconnect(con)
+      write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
       
       shinyalert(title = "Upload successful", type = "success")
       output$upload_status_indole_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
       
+      
+      dbDisconnect(con)
     }
     
     
@@ -1643,7 +1671,11 @@ server <- function(input, output, session)
       
       
       # UPDATE LOG FILE
+      
       name = file$name
+      df_log = read.csv("metabolomics_postgress_upload_log.csv")
+      df_log[is.na(df_log)] = 0
+      
       df_log1 <- data.frame(filename = name,
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
@@ -1651,14 +1683,14 @@ server <- function(input, output, session)
                             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                             sample_count = nrow(df)
       )
+      df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
       
-      write.table(x = df_log1, file = "metabolomics_postgress_upload_log.csv", col.names = F, row.names = F, append = TRUE, sep = ",")
-      
-      
-      dbDisconnect(con)
+      write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
       
       shinyalert(title = "Upload successful", type = "success")
       output$upload_status_indole_quant <- renderText("Upload successful") #'*PANEL SPECIFIC*
+      
+      dbDisconnect(con)
       
     }
     
