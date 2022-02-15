@@ -161,7 +161,7 @@ all_panel_colors = c(pfbbr_colors, tms_colors, bile_colors, indole_colors)
 # 1. Execution #########################################################################################################
 source('ui.R', local=TRUE)
 source('server.R', local=TRUE)
-shinyApp(ui=ui, server=server)
-#runApp(list(ui=ui, server=server), host="0.0.0.0",port=1234)
+#shinyApp(ui=ui, server=server)
+runApp(list(ui=ui, server=server), host="0.0.0.0",port=1234)
 
 #profvis::profvis(runApp('main.R'))
