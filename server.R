@@ -293,7 +293,7 @@ server <- function(input, output, session)
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
                batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                type = "normalized") %>% #'*PANEL SPECIFIC*
-        select(date_run, batch, type, filename, compound, value)
+        select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
       
       dbWriteTable(con, "scfa_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -351,7 +351,7 @@ server <- function(input, output, session)
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
              batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
              type = "normalized") %>% #'*PANEL SPECIFIC*
-      select(date_run, batch, type, filename, compound, value)
+      select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
     
     dbWriteTable(con, "scfa_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -500,7 +500,7 @@ server <- function(input, output, session)
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
                batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                type = "quant") %>% #'*PANEL SPECIFIC*
-        select(date_run, batch, type, filename, compound, value)
+        select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
       
       dbWriteTable(con, "scfa_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -559,7 +559,7 @@ server <- function(input, output, session)
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
              batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
              type = "quant") %>% #'*PANEL SPECIFIC*
-      select(date_run, batch, type, filename, compound, value)
+      select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
     
     dbWriteTable(con, "scfa_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -716,7 +716,7 @@ server <- function(input, output, session)
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
                batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                type = "normalized") %>% #'*PANEL SPECIFIC*
-        select(date_run, batch, type, filename, compound, value)
+        select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
       dbWriteTable(con, "tms_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
       dbSendStatement(con, "GRANT SELECT ON tms_v3 TO dfi_lab") #'*PANEL SPECIFIC*
@@ -772,7 +772,7 @@ server <- function(input, output, session)
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
              batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
              type = "normalized") %>% #'*PANEL SPECIFIC*
-      select(date_run, batch, type, filename, compound, value)
+      select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
     
     dbWriteTable(con, "tms_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -947,7 +947,7 @@ server <- function(input, output, session)
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
                batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                type = "normalized") %>% #'*PANEL SPECIFIC*
-        select(date_run, batch, type, filename, compound, value)
+        select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
       
       dbWriteTable(con, "bile_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -1008,7 +1008,7 @@ server <- function(input, output, session)
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
              batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
              type = "normalized") %>% #'*PANEL SPECIFIC*
-      select(date_run, batch, type, filename, compound, value)
+      select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
     
     dbWriteTable(con, "bile_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -1169,7 +1169,7 @@ server <- function(input, output, session)
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
                batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                type = "quant") %>% #'*PANEL SPECIFIC*
-        select(date_run, batch, type, filename, compound, value)
+        select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
       
       dbWriteTable(con, "bile_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -1228,7 +1228,7 @@ server <- function(input, output, session)
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
              batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
              type = "quant") %>% #'*PANEL SPECIFIC*
-      select(date_run, batch, type, filename, compound, value)
+      select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
     
     dbWriteTable(con, "bile_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -1400,7 +1400,7 @@ server <- function(input, output, session)
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
                batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                type = "normalized") %>% #'*PANEL SPECIFIC*
-        select(date_run, batch, type, filename, compound, value)
+        select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
       
       dbWriteTable(con, "indole_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -1460,7 +1460,7 @@ server <- function(input, output, session)
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
              batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
              type = "normalized") %>% #'*PANEL SPECIFIC*
-      select(date_run, batch, type, filename, compound, value)
+      select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
     
     dbWriteTable(con, "indole_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -1620,7 +1620,7 @@ server <- function(input, output, session)
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
                batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                type = "quant") %>% #'*PANEL SPECIFIC*
-        select(date_run, batch, type, filename, compound, value)
+        select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
       
       dbWriteTable(con, "indole_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -1680,7 +1680,7 @@ server <- function(input, output, session)
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
              batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
              type = "quant") %>% #'*PANEL SPECIFIC*
-      select(date_run, batch, type, filename, compound, value)
+      select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
     
     dbWriteTable(con, "indole_v3", df_upload, row.names = F, append = T) #'*PANEL SPECIFIC*
@@ -1708,6 +1708,7 @@ server <- function(input, output, session)
     output$upload_status_indole_quant <- renderText("Upload successful") #'*PANEL SPECIFIC*
     
   })
+  
   
   
   
