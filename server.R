@@ -68,8 +68,6 @@ server <- function(input, output, session)
                  
                  df = mutate(df, batch = toupper(batch))
                  
-                 
-                 
                  desired_order = c("PFBBr - qual", "PFBBr - quant", "TMS - qual", "Bile - qual", "Bile - quant" ,
                                    "Indole - qual", "Indole - quant")
                  
