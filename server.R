@@ -1279,7 +1279,7 @@ server <- function(input, output, session)
     df_log1 <- data.frame(filename = name,
                           date = format(Sys.Date(),format = "%Y%m%d"),
                           time = format(Sys.time(),format = "%H:%M:%S"),
-                          panel = "Bile - qual", #'*PANEL SPECIFIC*
+                          panel = "Bile - quant", #'*PANEL SPECIFIC*
                           batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
                           sample_count = nrow(df)
     )
@@ -1288,7 +1288,7 @@ server <- function(input, output, session)
     write.csv(x = df_log, file = "metabolomics_postgress_upload_log.csv", row.names = F)
     
     shinyalert(title = "Upload successful", type = "success")
-    output$upload_status_bile_qual <- renderText("Upload successful") #'*PANEL SPECIFIC*
+    output$upload_status_bile_quant <- renderText("Upload successful") #'*PANEL SPECIFIC*
     
   })
   
