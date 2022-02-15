@@ -267,7 +267,7 @@ server <- function(input, output, session)
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     df_log[is.na(df_log)] = 0
     
-    if((any(df_log["panel"]=="PFBBr - qual") & any(df_log["batch"]==batch)) == TRUE)
+    if(any(df_log["panel"]=="PFBBr - qual" & df_log["batch"]==batch) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_pfbbr_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -482,7 +482,7 @@ server <- function(input, output, session)
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     df_log[is.na(df_log)] = 0
     
-    if((any(df_log["panel"]=="PFBBr - quant") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
+    if(any(df_log["panel"]=="PFBBr - quant" & df_log["batch"]==batch) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_pfbbr_quant <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -704,7 +704,7 @@ server <- function(input, output, session)
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     df_log[is.na(df_log)] = 0
     
-    if((any(df_log["panel"]=="TMS - qual") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
+    if(any(df_log["panel"]=="TMS - qual" & df_log["batch"]==batch) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_tms_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -944,7 +944,7 @@ server <- function(input, output, session)
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     df_log[is.na(df_log)] = 0
     
-    if((any(df_log["panel"]=="Bile - qual") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
+    if(any(df_log["panel"]=="Bile - qual" & df_log["batch"]==batch) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_bile_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -1173,7 +1173,7 @@ server <- function(input, output, session)
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     df_log[is.na(df_log)] = 0
     
-    if((any(df_log["panel"]=="Bile - quant") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
+    if(any(df_log["panel"]=="Bile - quant" & df_log["batch"]==batch) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_bile_quant <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -1412,7 +1412,7 @@ server <- function(input, output, session)
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     df_log[is.na(df_log)] = 0
     
-    if((any(df_log["panel"]=="Indole - qual") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
+    if(any(df_log["panel"]=="Indole - qual" & df_log["batch"]==batch) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_indole_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
@@ -1636,7 +1636,7 @@ server <- function(input, output, session)
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
     df_log[is.na(df_log)] = 0
     
-    if((any(df_log["panel"]=="Indole - quant") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
+    if(any(df_log["panel"]=="Indole - quant" & df_log["batch"]==batch) == TRUE) #'*PANEL SPECIFIC*
     {
       shinyalert(title = "File name already exists", type = "error")
       output$upload_status_indole_quant <- renderText("File name already exists") #'*PANEL SPECIFIC*
