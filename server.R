@@ -265,7 +265,7 @@ server <- function(input, output, session)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
-    
+    df_log[is.na(df_log)] = 0
     
     if((any(df_log["panel"]=="PFBBr - qual") & any(df_log["batch"]==batch)) == TRUE)
     {
@@ -363,6 +363,7 @@ server <- function(input, output, session)
     
     name = file$name
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     df_log1 <- data.frame(filename = name,
                           date = format(Sys.Date(),format = "%Y%m%d"),
@@ -474,6 +475,7 @@ server <- function(input, output, session)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     if((any(df_log["panel"]=="PFBBr - quant") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
@@ -571,6 +573,7 @@ server <- function(input, output, session)
     
     name = file$name
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     df_log1 <- data.frame(filename = name,
                           date = format(Sys.Date(),format = "%Y%m%d"),
@@ -689,6 +692,7 @@ server <- function(input, output, session)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     if((any(df_log["panel"]=="TMS - qual") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
@@ -784,6 +788,7 @@ server <- function(input, output, session)
     
     name = file$name
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     df_log1 <- data.frame(filename = name,
                           date = format(Sys.Date(),format = "%Y%m%d"),
@@ -922,6 +927,7 @@ server <- function(input, output, session)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     if((any(df_log["panel"]=="Bile - qual") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
@@ -929,7 +935,7 @@ server <- function(input, output, session)
       output$upload_status_bile_qual <- renderText("File name already exists") #'*PANEL SPECIFIC*
       shinyjs::show("overwrite_bile_qual") #'*PANEL SPECIFIC*
     }
-    
+
     # APPEND TO MASTER DATAFRAME
     else
     {
@@ -990,6 +996,8 @@ server <- function(input, output, session)
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
                     user="dfi_admin", password="dfibugs")
     
+    # Remove similar data
+    
     postgres_table = tbl(con,"bile_v3") %>% filter(!(batch == batch_current & type == "normalized")) %>% collect() #'*PANEL SPECIFIC*
     
     dbWriteTable(con, "bile_v3", postgres_table, row.names = F, append = F, overwrite=T) #'*PANEL SPECIFIC*
@@ -1020,6 +1028,7 @@ server <- function(input, output, session)
     
     name = file$name
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     df_log1 <- data.frame(filename = name,
                           date = format(Sys.Date(),format = "%Y%m%d"),
@@ -1142,6 +1151,7 @@ server <- function(input, output, session)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     if((any(df_log["panel"]=="Bile - quant") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
@@ -1240,6 +1250,7 @@ server <- function(input, output, session)
     
     name = file$name
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     df_log1 <- data.frame(filename = name,
                           date = format(Sys.Date(),format = "%Y%m%d"),
@@ -1375,6 +1386,7 @@ server <- function(input, output, session)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     if((any(df_log["panel"]=="Indole - qual") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
@@ -1472,6 +1484,7 @@ server <- function(input, output, session)
     
     name = file$name
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     df_log1 <- data.frame(filename = name,
                           date = format(Sys.Date(),format = "%Y%m%d"),
@@ -1593,6 +1606,7 @@ server <- function(input, output, session)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     if((any(df_log["panel"]=="Indole - quant") & any(df_log["batch"]==batch)) == TRUE) #'*PANEL SPECIFIC*
     {
@@ -1692,6 +1706,7 @@ server <- function(input, output, session)
     
     name = file$name
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
+    df_log[is.na(df_log)] = 0
     
     df_log1 <- data.frame(filename = name,
                           date = format(Sys.Date(),format = "%Y%m%d"),
