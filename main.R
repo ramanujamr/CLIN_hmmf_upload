@@ -5,6 +5,7 @@ p_load(
   shinyjs,
   shinythemes,
   tidyr,
+  stringr,
   tidyverse,
   dplyr,
   DT,

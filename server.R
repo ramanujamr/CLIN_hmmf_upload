@@ -64,13 +64,17 @@ server <- function(input, output, session)
                  df <- df %>% group_by(batch, panel) %>% arrange(desc(date), desc(time)) %>% dplyr::slice(1) %>% select(!starts_with("X"))
                  
                  df$sample_count <- as.numeric(df$sample_count)
+                 df$submission_date = str_match(df$filename, pattern="(?!_results_)([0-9]{8})(?=_)")[, 2]
+                 df$submission_date = str_replace(df$submission_date, pattern="(\\d{2})(\\d{2})(\\d{2})$", "\\1-\\2-\\3")
+                 
+                 df$batch = paste0(df$batch," ", df$submission_date)
+                 
                  df = df %>% group_by(panel, batch) %>% summarise(sample_count = sum(sample_count))
                  
                  df = mutate(df, batch = toupper(batch))
                  
                  desired_order = c("PFBBr - qual", "PFBBr - quant", "TMS - qual", "Bile - qual", "Bile - quant" ,
                                    "Indole - qual", "Indole - quant")
-                 
                  
                  df_pfbbr = df[df$panel %in% c('PFBBr - qual','PFBBr - quant'),]
                  df_tms = df[df$panel %in% c('TMS - qual'),]
