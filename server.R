@@ -68,7 +68,7 @@ server <- function(input, output, session)
                  df$submission_date = as.Date(df$submission_date, format = "%Y%m%d")
                  df$submission_date = format(df$submission_date, "%b %d, %Y")
                  
-                 df$batch = paste0(df$batch,"\n", df$submission_date)
+                 df$batch = paste0(df$batch," ", df$submission_date)
                  
                  df = df %>% group_by(panel, batch) %>% summarise(sample_count = sum(sample_count))
                  
