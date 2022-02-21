@@ -55,7 +55,7 @@ server <- function(input, output, session)
                                                   options = list(pageLength = 10))
   
   
-  ## 0.3 Upload stats plots ============================================================================================
+  ## 0.3 Plot upload stats =============================================================================================
   
   observeEvent(input$select_plot, 
                {
@@ -64,27 +64,27 @@ server <- function(input, output, session)
                  df <- df %>% group_by(batch, panel) %>% arrange(desc(date), desc(time)) %>% dplyr::slice(1) %>% select(!starts_with("X"))
                  
                  df$sample_count <- as.numeric(df$sample_count)
-                 df$submission_date = str_match(df$filename, pattern="(?!_results_)([0-9]{8})(?=_)")[, 2]
-                 df$submission_date = as.Date(df$submission_date, format = "%Y%m%d")
-                 df$submission_date = format(df$submission_date, "%b %d, %Y")
                  
-                 df$batch = paste0(df$batch," ", df$submission_date)
+                 # df_quant = subset(df, grepl("quant", panel))
+                 # df_quant$submission_date = str_match(df_quant$filename, pattern="(?!_results_)([0-9]{8})(?=_)")[, 2]
+                 # df_quant$submission_date = as.Date(df_quant$submission_date, format = "%Y%m%d")
+                 # df_quant$submission_date = format(df_quant$submission_date, "%b %d, %Y")
+                 # df_quant = df_quant[,c("A","B","E")]
+                 # 
+                 # df$batch = paste0(df$batch," ", df$submission_date)
                  
                  df = df %>% group_by(panel, batch) %>% summarise(sample_count = sum(sample_count))
                  
                  df = mutate(df, batch = toupper(batch))
                  
-                 desired_order = c("PFBBr - qual", "PFBBr - quant", "TMS - qual", "Bile - qual", "Bile - quant" ,
+                 desired_order = c("PFBBr - qual", "PFBBr - quant", "TMS - qual", "Bile - qual", "Bile - quant",
                                    "Indole - qual", "Indole - quant")
                  
                  df_pfbbr = df[df$panel %in% c('PFBBr - qual','PFBBr - quant'),]
                  df_tms = df[df$panel %in% c('TMS - qual'),]
                  df_bile = df[df$panel %in% c('Bile - qual','Bile - quant'),]
                  df_indole = df[df$panel %in% c('Indole - qual','Indole - quant'),]
-                 
-                 
-                 
-                 
+
                  
                  if(input$select_plot %in% "All panels")
                  {
@@ -266,7 +266,7 @@ server <- function(input, output, session)
     file = input$inFile_pfbbr_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
@@ -294,9 +294,10 @@ server <- function(input, output, session)
         mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
                compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
                compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+               metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
                filename = name,
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-               batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+               batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                type = "normalized") %>% #'*PANEL SPECIFIC*
         select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
@@ -316,7 +317,7 @@ server <- function(input, output, session)
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
                             panel = "PFBBr - qual", #'*PANEL SPECIFIC*
-                            batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                            batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                             sample_count = nrow(df)
       )
       df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -338,7 +339,7 @@ server <- function(input, output, session)
     file = input$inFile_pfbbr_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
   
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
                     user="dfi_admin", password="dfibugs")
@@ -357,9 +358,10 @@ server <- function(input, output, session)
       mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
              compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
              compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
              filename = name,
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
              type = "normalized") %>% #'*PANEL SPECIFIC*
       select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
@@ -379,7 +381,7 @@ server <- function(input, output, session)
                           date = format(Sys.Date(),format = "%Y%m%d"),
                           time = format(Sys.time(),format = "%H:%M:%S"),
                           panel = "PFBBr - qual", #'*PANEL SPECIFIC*
-                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                           sample_count = nrow(df)
     )
     df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -481,7 +483,7 @@ server <- function(input, output, session)
     file = input$inFile_pfbbr_quant #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
@@ -508,9 +510,10 @@ server <- function(input, output, session)
         mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
                compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
                compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+               metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
                filename = name,
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-               batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+               batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                type = "quant") %>% #'*PANEL SPECIFIC*
         select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
@@ -530,7 +533,7 @@ server <- function(input, output, session)
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
                             panel = "PFBBr - quant", #'*PANEL SPECIFIC*
-                            batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                            batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                             sample_count = nrow(df)
       )
       df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -553,7 +556,7 @@ server <- function(input, output, session)
     file = input$inFile_pfbbr_quant #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
                     user="dfi_admin", password="dfibugs")
@@ -572,9 +575,10 @@ server <- function(input, output, session)
       mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
              compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
              compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
              filename = name,
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
              type = "quant") %>% #'*PANEL SPECIFIC*
       select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
@@ -594,7 +598,7 @@ server <- function(input, output, session)
                           date = format(Sys.Date(),format = "%Y%m%d"),
                           time = format(Sys.time(),format = "%H:%M:%S"),
                           panel = "PFBBr - quant", #'*PANEL SPECIFIC*
-                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                           sample_count = nrow(df)
     )
     df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -703,7 +707,7 @@ server <- function(input, output, session)
     file = input$inFile_tms_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
@@ -731,9 +735,10 @@ server <- function(input, output, session)
         mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
                compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
                compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+               metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
                filename = name,
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-               batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+               batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                type = "normalized") %>% #'*PANEL SPECIFIC*
         select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
@@ -752,7 +757,7 @@ server <- function(input, output, session)
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
                             panel = "TMS - qual", #'*PANEL SPECIFIC*
-                            batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                            batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                             sample_count = nrow(df)
       )
       df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -773,7 +778,7 @@ server <- function(input, output, session)
     file = input$inFile_tms_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
                     user="dfi_admin", password="dfibugs")
@@ -792,9 +797,10 @@ server <- function(input, output, session)
       mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
              compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
              compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
              filename = name,
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
              type = "normalized") %>% #'*PANEL SPECIFIC*
       select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
@@ -814,7 +820,7 @@ server <- function(input, output, session)
                           date = format(Sys.Date(),format = "%Y%m%d"),
                           time = format(Sys.time(),format = "%H:%M:%S"),
                           panel = "TMS - qual", #'*PANEL SPECIFIC*
-                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                           sample_count = nrow(df)
     )
     df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -943,7 +949,7 @@ server <- function(input, output, session)
     file = input$inFile_bile_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
@@ -969,9 +975,10 @@ server <- function(input, output, session)
         mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
                compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
                compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+               metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
                filename = name,
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-               batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+               batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                type = "normalized") %>% #'*PANEL SPECIFIC*
         select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
@@ -991,7 +998,7 @@ server <- function(input, output, session)
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
                             panel = "Bile - qual", #'*PANEL SPECIFIC*
-                            batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                            batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                             sample_count = nrow(df)
       )
       df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -1016,7 +1023,7 @@ server <- function(input, output, session)
     file = input$inFile_bile_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
                     user="dfi_admin", password="dfibugs")
@@ -1037,9 +1044,10 @@ server <- function(input, output, session)
       mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
              compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
              compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
              filename = name,
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
              type = "normalized") %>% #'*PANEL SPECIFIC*
       select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
@@ -1059,7 +1067,7 @@ server <- function(input, output, session)
                           date = format(Sys.Date(),format = "%Y%m%d"),
                           time = format(Sys.time(),format = "%H:%M:%S"),
                           panel = "Bile - qual", #'*PANEL SPECIFIC*
-                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                           sample_count = nrow(df)
     )
     df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -1165,14 +1173,12 @@ server <- function(input, output, session)
   
   ## 5.3 Upload to postgres ============================================================================================
   
-
-  
   observeEvent(input$upload_bile_quant, { #'*PANEL SPECIFIC*
     
     file = input$inFile_bile_quant #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
@@ -1200,9 +1206,10 @@ server <- function(input, output, session)
         mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
                compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
                compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+               metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
                filename = name,
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-               batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+               batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                type = "quant") %>% #'*PANEL SPECIFIC*
         select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
@@ -1222,7 +1229,7 @@ server <- function(input, output, session)
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
                             panel = "Bile - quant", #'*PANEL SPECIFIC*
-                            batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                            batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                             sample_count = nrow(df)
       )
       df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -1244,7 +1251,7 @@ server <- function(input, output, session)
     file = input$inFile_bile_quant #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
                     user="dfi_admin", password="dfibugs")
@@ -1263,9 +1270,10 @@ server <- function(input, output, session)
       mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
              compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
              compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
              filename = name,
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
              type = "quant") %>% #'*PANEL SPECIFIC*
       select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
@@ -1285,7 +1293,7 @@ server <- function(input, output, session)
                           date = format(Sys.Date(),format = "%Y%m%d"),
                           time = format(Sys.time(),format = "%H:%M:%S"),
                           panel = "Bile - quant", #'*PANEL SPECIFIC*
-                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                           sample_count = nrow(df)
     )
     df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -1411,7 +1419,7 @@ server <- function(input, output, session)
     file = input$inFile_indole_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
@@ -1437,9 +1445,10 @@ server <- function(input, output, session)
         mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
                compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
                compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+               metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
                filename = name,
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-               batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+               batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                type = "normalized") %>% #'*PANEL SPECIFIC*
         select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
@@ -1459,7 +1468,7 @@ server <- function(input, output, session)
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
                             panel = "Indole - qual", #'*PANEL SPECIFIC*
-                            batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                            batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                             sample_count = nrow(df)
       )
       df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -1482,7 +1491,7 @@ server <- function(input, output, session)
     file = input$inFile_indole_qual #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
                     user="dfi_admin", password="dfibugs")
@@ -1501,9 +1510,10 @@ server <- function(input, output, session)
       mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
              compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
              compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
              filename = name,
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
              type = "normalized") %>% #'*PANEL SPECIFIC*
       select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
@@ -1523,7 +1533,7 @@ server <- function(input, output, session)
                           date = format(Sys.Date(),format = "%Y%m%d"),
                           time = format(Sys.time(),format = "%H:%M:%S"),
                           panel = "Indole - qual", #'*PANEL SPECIFIC*
-                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                           sample_count = nrow(df)
     )
     df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -1635,7 +1645,7 @@ server <- function(input, output, session)
     file = input$inFile_indole_quant #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     # CHECK FOR DUPLICATE FILENAME
     df_log = read.csv("metabolomics_postgress_upload_log.csv")
@@ -1663,9 +1673,10 @@ server <- function(input, output, session)
         mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
                compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
                compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+               metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
                filename = name,
                date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-               batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+               batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                type = "quant") %>% #'*PANEL SPECIFIC*
         select(metabolomicsID, date_run, batch, type, filename, compound, value)
       
@@ -1685,7 +1696,7 @@ server <- function(input, output, session)
                             date = format(Sys.Date(),format = "%Y%m%d"),
                             time = format(Sys.time(),format = "%H:%M:%S"),
                             panel = "Indole - quant", #'*PANEL SPECIFIC*
-                            batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                            batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                             sample_count = nrow(df)
       )
       df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
@@ -1708,7 +1719,7 @@ server <- function(input, output, session)
     file = input$inFile_indole_quant #'*PANEL SPECIFIC*
     df = read.csv(file$datapath)
     name = file$name
-    batch_current = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name)
+    batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
                     user="dfi_admin", password="dfibugs")
@@ -1727,9 +1738,10 @@ server <- function(input, output, session)
       mutate(compound = gsub(x = compound, pattern = "^x(?=[0-9])", replacement = "", perl = T, ignore.case = T),
              compound = gsub(x = compound, pattern = "\\.+", replacement = "-"),
              compound = gsub(x = compound, pattern = "-acid", replacement = " acid"),
+             metabolomicsID = gsub(x = metabolomicsID, pattern = "^[0-9]+_+", replacement = ""),
              filename = name,
              date_run = str_extract(string = name, pattern = "([0-9]+)(?=_\\D)"),
-             batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+             batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
              type = "quant") %>% #'*PANEL SPECIFIC*
       select(metabolomicsID, date_run, batch, type, filename, compound, value)
     
@@ -1749,7 +1761,7 @@ server <- function(input, output, session)
                           date = format(Sys.Date(),format = "%Y%m%d"),
                           time = format(Sys.time(),format = "%H:%M:%S"),
                           panel = "Indole - quant", #'*PANEL SPECIFIC*
-                          batch = str_extract(pattern = "\\w{4}[0-9]{3}(?=_[0-9]+\\.)", string = name),
+                          batch = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name),
                           sample_count = nrow(df)
     )
     df_log <- df_log %>% mutate(date = as.character(date)) %>% bind_rows(df_log1)
