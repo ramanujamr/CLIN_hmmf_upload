@@ -285,7 +285,7 @@ server <- function(input, output, session)
       # APPEND TO MASTER DATAFRAME
       
       con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                      user="dfi_admin", password="dfibugs")
+                      user="dfi_admin", password="dfiadmin2022")
       
       df_upload <- 
         df %>% 
@@ -342,7 +342,7 @@ server <- function(input, output, session)
     batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
   
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                    user="dfi_admin", password="dfibugs")
+                    user="dfi_admin", password="dfiadmin2022")
     
     postgres_table = tbl(con,"scfa_v3") %>% filter(!(batch == batch_current & type == "normalized")) %>% collect() 
     
@@ -501,7 +501,7 @@ server <- function(input, output, session)
     else
     {
       con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                      user="dfi_admin", password="dfibugs")
+                      user="dfi_admin", password="dfiadmin2022")
       
       df_upload <- 
         df %>% 
@@ -559,7 +559,7 @@ server <- function(input, output, session)
     batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                    user="dfi_admin", password="dfibugs")
+                    user="dfi_admin", password="dfiadmin2022")
     
     postgres_table = tbl(con,"scfa_v3") %>% filter(!(batch == batch_current & type == "quant")) %>% collect() #'*PANEL SPECIFIC*
     
@@ -726,7 +726,7 @@ server <- function(input, output, session)
       # APPEND TO MASTER DATAFRAME
       
       con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                      user="dfi_admin", password="dfibugs")
+                      user="dfi_admin", password="dfiadmin2022")
       
       df_upload <- 
         df %>% 
@@ -781,7 +781,7 @@ server <- function(input, output, session)
     batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                    user="dfi_admin", password="dfibugs")
+                    user="dfi_admin", password="dfiadmin2022")
     
     postgres_table = tbl(con,"tms_v3") %>% filter(!(batch == batch_current & type == "normalized")) %>% collect() #'*PANEL SPECIFIC*
     
@@ -966,7 +966,7 @@ server <- function(input, output, session)
     else
     {
       con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                      user="dfi_admin", password="dfibugs")
+                      user="dfi_admin", password="dfiadmin2022")
       
       df_upload <- 
         df %>% 
@@ -1026,7 +1026,7 @@ server <- function(input, output, session)
     batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                    user="dfi_admin", password="dfibugs")
+                    user="dfi_admin", password="dfiadmin2022")
     
     # Remove similar data
     
@@ -1197,7 +1197,7 @@ server <- function(input, output, session)
       # APPEND TO MASTER DATAFRAME
       
       con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                      user="dfi_admin", password="dfibugs")
+                      user="dfi_admin", password="dfiadmin2022")
       
       df_upload <- 
         df %>% 
@@ -1254,7 +1254,7 @@ server <- function(input, output, session)
     batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                    user="dfi_admin", password="dfibugs")
+                    user="dfi_admin", password="dfiadmin2022")
     
     postgres_table = tbl(con,"bile_v3") %>% filter(!(batch == batch_current & type == "quant")) %>% collect() #'*PANEL SPECIFIC*
     
@@ -1436,7 +1436,7 @@ server <- function(input, output, session)
     else
     {
       con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                      user="dfi_admin", password="dfibugs")
+                      user="dfi_admin", password="dfiadmin2022")
       
       df_upload <- 
         df %>% 
@@ -1494,7 +1494,7 @@ server <- function(input, output, session)
     batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                    user="dfi_admin", password="dfibugs")
+                    user="dfi_admin", password="dfiadmin2022")
     
     postgres_table = tbl(con,"indole_v3") %>% filter(!(batch == batch_current & type == "normalized")) %>% collect() #'*PANEL SPECIFIC*
     
@@ -1664,7 +1664,7 @@ server <- function(input, output, session)
       # APPEND TO MASTER DATAFRAME
       
       con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                      user="dfi_admin", password="dfibugs")
+                      user="dfi_admin", password="dfiadmin2022")
       
       df_upload <- 
         df %>% 
@@ -1722,7 +1722,7 @@ server <- function(input, output, session)
     batch_current = str_extract(pattern = "[A-Za-z]{4}[0-9]+(?=_[0-9]{8})", string = name)
     
     con <-dbConnect(dbDriver("PostgreSQL"), host="128.135.41.32", dbname="clinical_db",
-                    user="dfi_admin", password="dfibugs")
+                    user="dfi_admin", password="dfiadmin2022")
     
     postgres_table = tbl(con,"indole_v3") %>% filter(!(batch == batch_current & type == "quant")) %>% collect() #'*PANEL SPECIFIC*
     
